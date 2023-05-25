@@ -58,4 +58,42 @@ userRouter.route("/create").post(async (req, res) => {
   res.status(201).json({ status: "success", data: user[0] });
 });
 
+userRouter.route("/update/:id").patch(async (req, res) => {
+  const { age, email } = req.body;
+  const id = req.params.id;
+
+  const [update] = await pool.query(
+    `
+    UPDATE users
+    SET age = ?, email = ?
+    WHERE id = ?
+    `,
+    [age, email, id]
+  );
+
+  res.status(202).json({
+    status: "success",
+    data: update,
+    message: "User updated successfully",
+  });
+});
+
+userRouter.route("/delete/:id").delete(async (req, res) => {
+  const id = req.params.id;
+
+  const [deleteUser] = await pool.query(
+    `
+    DELETE FROM users
+    WHERE id = ?
+    `,
+    [id]
+  );
+
+  res.status(200).json({
+    status: "success",
+    data: deleteUser,
+    message: "User deleted successfully",
+  });
+});
+
 module.exports = userRouter;
